@@ -2,7 +2,7 @@
 
 This is a simple physics engine that I wrote in C++ during a game jam.
 
-The engine itself has no dependency at all. But the demo is based on SFML and only tested with Xcode. Cmake should be able to find the SFML library after you install it. If you can compile but failed to run the demo, please copy resources to the working directory.
+The engine itself has no dependency at all, but the demo is based on SFML. Cmake could locate the SFML library after you install it. And if you fail to run the demo, please check the output directory of the engine library and of graphics resources.
 
 ![image for demo](https://www.dimgai.com/img/engine.gif)
 
@@ -14,8 +14,8 @@ The engine itself has no dependency at all. But the demo is based on SFML and on
 ## TODO
 
 - Collision
-- One direction gravity
-- Make it easier to build it on other platforms
+- One-direction gravity
+- ~~Make it easier to build it on other platforms~~
 
 ## Thanks
-- [Gwen Petiteau](https://www.linkedin.com/in/gwen-petiteau-a418b7a0) : All the beautiful resources for the demo
+- [Gwen Petiteau](https://www.linkedin.com/in/gwen-petiteau-a418b7a0) : All the graphics resources for the demo
