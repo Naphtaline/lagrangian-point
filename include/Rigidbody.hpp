@@ -45,9 +45,6 @@ namespace physics {
         /// \brief Get the center of mass of the rigidbody
         virtual Vector getCenter() const  = 0;
         
-//        /// \brief Get the head point of the rigidbody. This point defines the "positive" direction of the rigidbody
-//        virtual sf::Vector2f getHeadPoint() const  = 0;
-        
         /// \brief Move the rigidbody
         virtual void moveByForce(float x, float y)  = 0;
         

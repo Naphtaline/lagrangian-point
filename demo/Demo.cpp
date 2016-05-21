@@ -31,6 +31,7 @@ int main(int, char const**)
         }
     }
     sf::RenderWindow window(modeToUse, "Lagrangian Point Engine");
+    window.setVerticalSyncEnabled(true);
     
     auto unit = modeToUse.width / 100.0f;
 
