@@ -13,7 +13,6 @@
 
 using namespace physics;
 
-float distance(Vector a, Vector b);
 float vectorToDegree(Vector vector);
 
 Engine::Engine() : maxVelocity(FLT_MAX), minX(INT_MIN), minY(INT_MIN), maxX(INT_MAX), maxY(INT_MAX), bounceRateForMovementArea(0.1f), clock(nullptr) {
@@ -156,11 +155,6 @@ void Engine::update() {
 
         rigid->moveByForce(newV.x, newV.y);
     }
-}
-
-float distance(Vector a, Vector b) {
-    auto dist = a - b;
-    return std::sqrt(dist.x * dist.x + dist.y * dist.y);
 }
 
 float vectorToDegree(Vector vector) {

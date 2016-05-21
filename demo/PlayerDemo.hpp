@@ -11,8 +11,8 @@
 
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
-#include "Rigidbody.hpp"
-#include "Vector.hpp"
+#include <Rigidbody.hpp>
+#include <Vector.hpp>
 
 class PlayerDemo : public sf::CircleShape, public physics::Rigidbody {
     physics::Vector v;

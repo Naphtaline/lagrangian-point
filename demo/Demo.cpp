@@ -15,8 +15,8 @@
 //
 
 #include <SFML/Graphics.hpp>
-#include "Vector.hpp"
-#include "Engine.hpp"
+#include <Vector.hpp>
+#include <Engine.hpp>
 #include "PlanetDemo.hpp"
 #include "PlayerDemo.hpp"
 

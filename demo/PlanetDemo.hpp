@@ -11,8 +11,8 @@
 
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
-#include "GravitySource.hpp"
-#include "Vector.hpp"
+#include <GravitySource.hpp>
+#include <Vector.hpp>
 
 class PlanetDemo : public sf::RectangleShape, public physics::GravitySource {
 public:

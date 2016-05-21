@@ -9,7 +9,24 @@
 #ifndef Vector_h
 #define Vector_h
 
+#include <complex>
+
 namespace physics {
+    class Vector;
+    Vector operator-(const Vector& right);
+    Vector operator+(const Vector&  left, const Vector& right);
+    Vector& operator+=(Vector& left, const Vector& right);
+    Vector operator-(const Vector& left, const Vector& right);
+    Vector& operator-=(Vector&  left, const Vector& right);
+    Vector operator*(float left, const Vector&  right);
+    Vector operator*(const Vector& left, float right);
+    Vector& operator*=(Vector& left, float right);
+    Vector operator/(const Vector& left, float right);
+    Vector& operator/=(Vector& left, float right);
+    bool operator==(const Vector& left, const Vector& right);
+    bool operator!=(const Vector& left, const Vector& right);
+    float distance(const Vector& left, const Vector& right);
+    
     class Vector {
     public:
         float x = 0;
@@ -21,6 +38,18 @@ namespace physics {
         
         Vector(float a, float b): x(a), y(b) {
             
+        }
+        
+        inline float normSq() {
+            return x * x + y * y;
+        }
+        
+        inline float norm() {
+            return std::sqrt(x * x + y * y);
+        }
+        
+        inline Vector normalize() {
+            return *(this) / norm();
         }
     };
     
@@ -78,6 +107,10 @@ namespace physics {
     
     inline bool operator!=(const Vector& left, const Vector& right) {
         return left.x != right.x || left.y != right.y;
+    }
+    
+    inline float distance(const Vector& left, const Vector& right) {
+        return (left - right).norm();
     }
 }
 

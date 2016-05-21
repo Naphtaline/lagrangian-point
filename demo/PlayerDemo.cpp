@@ -72,8 +72,7 @@ void PlayerDemo::setForce(float directionX, float directionY) {
     force.x = directionX;
     force.y = directionY;
     if (directionX != 0 || directionY != 0) {
-        float length = std::sqrt(directionX * directionX + directionY * directionY);
-        force = force / length * forceValue;
+        force = force.normalize() * forceValue;
         setLanded(false);
     }
 }
@@ -81,9 +80,7 @@ void PlayerDemo::setForce(float directionX, float directionY) {
 void PlayerDemo::jump() {
     if (isLanded()) {
         setLanded(false);
-        auto vectorF = getCenter() - landCenter;
-        auto dist = std::sqrt(vectorF.x * vectorF.x + vectorF.y * vectorF.y);
-        vectorF = vectorF / dist * forceValue * 1.5f; // normalize the vector and then apply 1.5 * force for jump
-        force = vectorF;
+        force = (getCenter() - landCenter).normalize();
+        force *= forceValue * 1.5f; // normalize the vector and then apply 1.5 * force for jump
     }
 }
