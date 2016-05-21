@@ -21,6 +21,7 @@ namespace physics {
     Vector operator*(float left, const Vector&  right);
     Vector operator*(const Vector& left, float right);
     Vector& operator*=(Vector& left, float right);
+    float operator*(const Vector& left, const Vector& right);
     Vector operator/(const Vector& left, float right);
     Vector& operator/=(Vector& left, float right);
     bool operator==(const Vector& left, const Vector& right);
@@ -89,6 +90,10 @@ namespace physics {
         left.x *= right;
         left.y *= right;
         return left;
+    }
+    
+    inline float operator*(const Vector& left, const Vector& right) {
+        return left.x * right.x + left.y * right.y;
     }
     
     inline Vector operator/(const Vector& left, float right) {
