@@ -36,7 +36,7 @@ int main(int, char const**)
 
     // Load sprites to display
     sf::Texture textureBackground;
-    if (!textureBackground.loadFromFile("../resources/Background.png")) {
+    if (!textureBackground.loadFromFile("resources/Background.png")) {
         return EXIT_FAILURE;
     }
     sf::RectangleShape backgroud(sf::Vector2f(modeToUse.width, modeToUse.height));
@@ -44,26 +44,26 @@ int main(int, char const**)
 
     // Set the Icon
     sf::Image icon;
-    if (!icon.loadFromFile("../resources/icon.png")) {
+    if (!icon.loadFromFile("resources/icon.png")) {
         return EXIT_FAILURE;
     }
     window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
 
     // Load sprites to display
     sf::Texture texturePlayer;
-    if (!texturePlayer.loadFromFile("../resources/Player.png")) {
+    if (!texturePlayer.loadFromFile("resources/Player.png")) {
         return EXIT_FAILURE;
     }
     sf::Texture texturePlanet1;
-    if (!texturePlanet1.loadFromFile("../resources/Planet1.png")) {
+    if (!texturePlanet1.loadFromFile("resources/Planet1.png")) {
         return EXIT_FAILURE;
     }
     sf::Texture texturePlanet2;
-    if (!texturePlanet2.loadFromFile("../resources/Planet2.png")) {
+    if (!texturePlanet2.loadFromFile("resources/Planet2.png")) {
         return EXIT_FAILURE;
     }
     sf::Texture texturePlanet3;
-    if (!texturePlanet3.loadFromFile("../resources/Planet3.png")) {
+    if (!texturePlanet3.loadFromFile("resources/Planet3.png")) {
         return EXIT_FAILURE;
     }
     // create a Rigidbody
