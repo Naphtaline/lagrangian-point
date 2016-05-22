@@ -14,6 +14,10 @@ Collider::Collider() : attachedRigidbody(nullptr), trigger(false) {
     
 }
 
+Collider::~Collider() {
+
+}
+
 void Collider::setAttachedRigidbody(std::shared_ptr<physics::Rigidbody> rigidbody) {
     this->attachedRigidbody = rigidbody;
 }

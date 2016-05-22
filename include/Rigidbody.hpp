@@ -15,50 +15,59 @@ namespace physics {
     
     /// \brief An interface for things that could be affected by THE LAW OF PHYSICS (only gravity for now)
     class Rigidbody {
+    private:
+        bool useGravity;
+        Vector velocity;
+        float mass;
+        float bounciness;
+        Vector extraForce;
     public:
+        Rigidbody();
+        virtual ~Rigidbody();
         
-        /// \brief Check whether the rigidbody is "landed" on a gravity source
+        /// \brief Set whether gravity affects this rigidbody
+        void rbSetUseGravity(bool value);
+        
+        /// \brief Check whether gravity affects the rigidbody
+        bool rbIsUsingGravity() const;
+        
+        /// \brief Set a mass value for the rigidbody
+        void rbSetMass(float mass);
+        
+        /// \brief Get the mass of the rigidbody
+        float rbGetMass() const;
+        
+        /// \brief Set a bounciness value for the rigidbody
         ///
-        /// When a rigidbody is landed, it would not be affect by gravities anymore
-        virtual bool isLanded() const = 0;
+        /// This is used on collision
+        void rbSetBounciness(float bounciness);
         
-        /// \brief Set the rigidbody as landed
-        ///
-        /// This could be used to disable gravity.
-        virtual void setLanded(bool value) = 0;
-        
-        /// \brief Not used yet
-        virtual float getMass() const  = 0;
-        
-        /// \brief Get the radius for the rigidbody
-        ///
-        /// Rigidbody is treated as a circle in the Engine
-        virtual float getRigidbodyRadius() const = 0;
+        /// \brief Get the bounciness for the rigidbody
+        float rbGetBounciness() const;
         
         /// \brief Set the current velocity for movement
         /// \param velocity the velocity in unit/s
-        virtual void setVelocity(Vector velocity) = 0;
+        void rbSetVelocity(Vector velocity);
         
         /// \brief Get the current velocity
-        virtual Vector getVelocity() const  = 0;
+        Vector rbGetVelocity() const;
         
-        /// \brief Get the center of mass of the rigidbody
-        virtual Vector getCenter() const  = 0;
+        /// \brief Set an extra force that would push the rigidbody
+        ///
+        /// This is designed for moving the rigidbody with force
+        void rbSetExtraForce(Vector force);
+        
+        /// \brief Get the extra force
+        Vector rbGetExtraForce() const;
+        
+        /// \brief Get the center of mass in global of the rigidbody
+        virtual Vector rbGetCenter() const  = 0;
         
         /// \brief Move the rigidbody
-        virtual void moveByForce(float x, float y)  = 0;
+        virtual void rbMove(float x, float y)  = 0;
         
         /// \brief Rotate the rigidbody
-        virtual void setRotationByGravity(float degree)  = 0;
-        
-        /// \brief Set the center of gravity source that the rigidbody landed on
-        /// \param center the center of mass of the gravity source
-        virtual void setLandedSource(Vector center) = 0;
-        
-        /// \brief Get a force would push the rigidbody
-        ///
-        /// This is designed for moving the rigidbody with physics
-        virtual Vector getForce() const = 0;
+        virtual void rbSetRotation(float degree)  = 0;
     };
 }
 #endif /* Rigidbody_h */

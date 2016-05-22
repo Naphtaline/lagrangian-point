@@ -10,54 +10,27 @@
 #include <complex>
 
 PlayerDemo::PlayerDemo(float radius, physics::Vector velocity)
-: sf::CircleShape(radius), v(velocity), forceValue(5.0f), landed(false) {
+: sf::CircleShape(radius), physics::Rigidbody(), forceValue(5.0f) {
     setOrigin(radius, radius);
-    force = physics::Vector(0, 0);
+    rbSetExtraForce(physics::Vector(0, 0));
+    rbSetVelocity(velocity);
 }
 
-bool PlayerDemo::isLanded() const {
-    return landed;
+PlayerDemo::~PlayerDemo() {
+    
 }
 
-void PlayerDemo::setLanded(bool value) {
-    landed = value;
-}
-
-float PlayerDemo::getMass() const {
-    return 1.0f;
-}
-
-float PlayerDemo::getRigidbodyRadius() const {
-    return getRadius();
-}
-
-void PlayerDemo::setVelocity(physics::Vector velocity) {
-    v = velocity;
-}
-
-physics::Vector PlayerDemo::getVelocity() const {
-    return v;
-}
-
-physics::Vector PlayerDemo::getCenter() const {
+physics::Vector PlayerDemo::rbGetCenter() const {
     auto point = getPosition();
     return physics::Vector(point.x, point.y);
 }
 
-void PlayerDemo::moveByForce(float x, float y) {
+void PlayerDemo::rbMove(float x, float y) {
     move(x, y);
 }
 
-void PlayerDemo::setRotationByGravity(float degree) {
+void PlayerDemo::rbSetRotation(float degree) {
     setRotation(degree);
-}
-
-void PlayerDemo::setLandedSource(physics::Vector center) {
-    landCenter = center;
-}
-
-physics::Vector PlayerDemo::getForce() const {
-    return force;
 }
 
 void PlayerDemo::setForceValue(float f) {
@@ -69,18 +42,19 @@ float PlayerDemo::getForceValue() {
 }
 
 void PlayerDemo::setForce(float directionX, float directionY) {
-    force.x = directionX;
-    force.y = directionY;
+    auto force = physics::Vector(directionX, directionY);
     if (directionX != 0 || directionY != 0) {
         force = force.normalize() * forceValue;
-        setLanded(false);
+        rbSetUseGravity(true);
     }
+    rbSetExtraForce(force);
 }
 
 void PlayerDemo::jump() {
-    if (isLanded()) {
-        setLanded(false);
-        force = (getCenter() - landCenter).normalize();
+    if (!rbIsUsingGravity()) {
+        rbSetUseGravity(true);
+        auto force = (rbGetCenter() - landCenter).normalize();
         force *= forceValue * 1.5f; // normalize the vector and then apply 1.5 * force for jump
+        rbSetExtraForce(force);
     }
 }

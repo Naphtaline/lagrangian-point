@@ -7,6 +7,7 @@
 //
 
 #include <complex>
+#include <cfloat>
 #include "CircleCollider.hpp"
 
 using namespace physics;
@@ -16,6 +17,10 @@ CircleCollider::CircleCollider() : CircleCollider(Vector(), 0) {
 }
 
 CircleCollider::CircleCollider(Vector center, float radius) : center(center), radius(radius) {
+    
+}
+
+CircleCollider::~CircleCollider() {
     
 }
 
@@ -35,11 +40,11 @@ float CircleCollider::getRadius() const {
     return this->radius;
 }
 
-bool CircleCollider::raycast(Ray ray, float maxDistance) {
+bool CircleCollider::raycast(Ray ray, float maxDistance, RaycastHit& hit) {
     auto rb = getAttachedRigidbody();
     auto centerAbsPosition = center;
     if (rb != nullptr) {
-        centerAbsPosition += rb->getCenter();
+        centerAbsPosition += rb->rbGetCenter();
     }
     
     auto distToOrigin = distance(ray.origin, centerAbsPosition);
@@ -68,19 +73,24 @@ bool CircleCollider::raycast(Ray ray, float maxDistance) {
     auto c = o2cV.normSq() - radius * radius;
     auto delta = b * b - 4 * a * c;
     
+    auto t = FLT_MAX;
     if (delta < 0) { // no real root
         return false;
     } else if (delta == 0) { // one real root
-        auto t = - b / 2 / a;
-        if (0 <= t && t <= 1) {
-            return true;
-        }
+        t = - b / 2 / a;
     } else { // two real roots
         auto t1 = (- b - std::sqrt(delta)) / 2 / a;
         auto t2 = (- b + std::sqrt(delta)) / 2 / a;
-        if ((0 <= t1 && t1 <= 1) || (0 <= t2 && t2 <= 1)) {
-            return true;
-        }
+        
+        t = (0 <= t1 && t1 <= 1) ? t1 : t;
+        t = (0 <= t2 && t2 <= 1 && t2 < t) ? t2 : t;
+    }
+    
+    if (0 <= t && t <= 1) {
+        hit.point = t * rayV + ray.origin;
+        hit.distance = maxDistance * t;
+        hit.rigidbody = this->getAttachedRigidbody();
+        return true;
     }
     
     return false;

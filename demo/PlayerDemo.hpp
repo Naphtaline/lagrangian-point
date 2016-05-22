@@ -15,27 +15,16 @@
 #include <Vector.hpp>
 
 class PlayerDemo : public sf::CircleShape, public physics::Rigidbody {
-    physics::Vector v;
     float forceValue;
-    physics::Vector force;
-    
-    bool landed;
     physics::Vector landCenter;
 public:
     PlayerDemo(float radius, physics::Vector velocity);
+    ~PlayerDemo();
     
     // implement methods in Rigidbody
-    virtual bool isLanded() const;
-    virtual void setLanded(bool value);
-    virtual float getMass() const;
-    virtual float getRigidbodyRadius() const;
-    virtual void setVelocity(physics::Vector velocity);
-    virtual physics::Vector getVelocity() const;
-    virtual physics::Vector getCenter() const;
-    virtual void moveByForce(float x, float y);
-    virtual void setRotationByGravity(float degree);
-    virtual void setLandedSource(physics::Vector center);
-    virtual physics::Vector getForce() const;
+    virtual physics::Vector rbGetCenter() const;
+    virtual void rbMove(float x, float y);
+    virtual void rbSetRotation(float degree);
     
     // custom methods for demo reason
     void setForceValue(float f);

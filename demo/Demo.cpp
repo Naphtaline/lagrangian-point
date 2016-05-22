@@ -94,7 +94,7 @@ int main(int, char const**)
     planet3->setOrigin(8 * unit, 8 * unit);
 
     // setup movement area
-    physics::Engine::get().setMovementArea(unit / 5, unit / 5, window.getSize().x - unit / 5, window.getSize().y - unit / 5);
+    physics::Engine::get().setMovementArea(3.5f * unit, 3.5f * unit, window.getSize().x - 3.5f * unit, window.getSize().y - 3.5f * unit);
 
     // add player & planets
     physics::Engine::get().addRigidbody(player);
@@ -119,8 +119,8 @@ int main(int, char const**)
                 switch (event.key.code) {
                     case sf::Keyboard::Escape: // reset the demo
                         player->setPosition(modeToUse.width / 2, modeToUse.height / 2);
-                        player->setVelocity(physics::Vector(2 * unit, 0));
-                        player->setLanded(false);
+                        player->rbSetVelocity(physics::Vector(2 * unit, 0));
+                        player->rbSetUseGravity(true);
                         break;
                     case sf::Keyboard::Space: // jump when landed
                         player->jump();

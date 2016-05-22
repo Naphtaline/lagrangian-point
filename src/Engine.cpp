@@ -83,77 +83,81 @@ void Engine::update() {
     for (auto rigidPair : rigidbodies) {
         auto rigid = rigidPair.second;
 
-        auto newV = rigid->getVelocity(); // new velocity
-        auto force = rigid->getForce();
-        auto mass = rigid->getMass();
+        auto newV = rigid->rbGetVelocity(); // new velocity
+        auto force = rigid->rbGetExtraForce();
+        auto mass = rigid->rbGetMass();
         auto vForce = force / mass;
 
         auto gravityA = Vector(); // new acceleration
-        if (!rigid->isLanded()) {
-
-            auto rigidRadius = rigid->getRigidbodyRadius();
-            auto landedCenter = Vector();
+        // calculate gravity
+        if (rigid->rbIsUsingGravity()) {
+//            auto rigidRadius = rigid->getRigidbodyRadius();
+//            auto landedCenter = Vector();
             // calculate gravities
             for (auto gravityPair : gravities) {
                 auto gravity = gravityPair.second;
-                auto dist = distance(rigid->getCenter(), gravity->getCenter());
-                if (gravity->getMaxDistance() >= dist) {
+                auto dist = distance(rigid->rbGetCenter(), gravity->getCenter());
+                
+                if (gravity->getMaxDistance() >= dist) { // rigidbody is in gravity field
                     float a = gravity->getAcceleration();
 
-                    if (gravity->getMinDistance() < dist) {
+                    if (gravity->getMinDistance() < dist) { // rigidbody is between max & min distance
                         float minDistSrq = gravity->getMinDistance() * gravity->getMinDistance();
                         a = a * minDistSrq / dist / dist;
-                    } else if (gravity->getGravityRadius() + rigidRadius < dist) {
-                        a = a * (dist - gravity->getGravityRadius()) / (gravity->getMinDistance() - gravity->getGravityRadius());
-                    } else {
-                        if (vForce.x == 0 && vForce.y == 0) {
-                            a = 0;
-                            rigid->setLanded(true);
-                            rigid->setLandedSource(gravity->getCenter());
-                            landedCenter = gravity->getCenter();
-                        }
+//                    } else if (gravity->getGravityRadius() + rigidRadius < dist) {
+//                        a = a * (dist - gravity->getGravityRadius()) / (gravity->getMinDistance() - gravity->getGravityRadius());
+//                    } else {
+//                        if (vForce.x == 0 && vForce.y == 0) {
+//                            a = 0;
+//                            rigid->rbSetUseGravity(false);
+//                            rigid->setLandedSource(gravity->getCenter());
+//                            landedCenter = gravity->getCenter();
+//                        }
+//                    }
                     }
 
-                    Vector vectorA = (gravity->getCenter() - rigid->getCenter()) / dist * a;
+                    Vector vectorA = (gravity->getCenter() - rigid->rbGetCenter()) / dist * a;
                     gravityA += vectorA;
                 }
             }
 
-            if (gravityA.x != 0 || gravityA.y != 00) {
-                rigid->setRotationByGravity(vectorToDegree(gravityA));
+            if (gravityA.x != 0 || gravityA.y != 0) {
+                rigid->rbSetRotation(vectorToDegree(gravityA));
             }
 
             newV += gravityA;
-            if (rigid->isLanded()) {
-                newV = Vector();
-                rigid->setRotationByGravity(vectorToDegree(landedCenter - rigid->getCenter()));
-            }
+//            if (!rigid->rbIsUsingGravity()) {
+//                newV = Vector();
+//                rigid->rbSetRotation(vectorToDegree(landedCenter - rigid->rbGetCenter()));
+//            }
         }
-
+        
+        // limit rigidbody in the movement area of engine
+        auto bouniness = std::min(bounceRateForMovementArea, rigid->rbGetBounciness());
+        auto rigidCenter = rigid->rbGetCenter();
+        if (rigidCenter.x < minX && newV.x < 0) {
+            newV.x = -newV.x * bouniness;
+        } else if (rigidCenter.x > maxX && newV.x > 0) {
+            newV.x = -newV.x * bouniness;
+        }
+        if (rigidCenter.y < minY && newV.y < 0) {
+            newV.y = -newV.y * bouniness;
+        } else if (rigidCenter.y > maxY && newV.y > 0) {
+            newV.y = -newV.y * bouniness;
+        }
+        
+        // update velocity and position
         newV += vForce;
         auto vValue = std::sqrt(newV.x * newV.x + newV.y * newV.y);
         if (vValue > maxVelocity) {
             newV *= maxVelocity / vValue;
         }
 
-        auto rigidCenter = rigid->getCenter();
-        auto rigidRadius = rigid->getRigidbodyRadius();
-        if (rigidCenter.x - rigidRadius < minX && newV.x < 0) {
-            newV.x = -newV.x * bounceRateForMovementArea;
-        } else if (rigidCenter.x + rigidRadius > maxX && newV.x > 0) {
-            newV.x = -newV.x * bounceRateForMovementArea;
-        }
-        if (rigidCenter.y - rigidRadius < minY && newV.y < 0) {
-            newV.y = -newV.y * bounceRateForMovementArea;
-        } else if (rigidCenter.y + rigidRadius > maxY && newV.y > 0) {
-            newV.y = -newV.y * bounceRateForMovementArea;
-        }
-
-        rigid->setVelocity(newV);
+        rigid->rbSetVelocity(newV);
 
         newV *= deltaTime.asSeconds();
 
-        rigid->moveByForce(newV.x, newV.y);
+        rigid->rbMove(newV.x, newV.y);
     }
 }
 
