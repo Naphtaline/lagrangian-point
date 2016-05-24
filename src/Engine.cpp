@@ -152,10 +152,10 @@ void Engine::update() {
                 
                 if (collider->raycast(ray, rigidCollider->getRayDistance(ray.direction), hit)) {
                     auto direction = (hit.point - centerMove).normalize();
-                    auto correction = hit.point - direction * hit.distance * 1.001f - centerMove;
+                    auto correction = hit.point - direction * rigidCollider->getRayDistance(ray.direction) - centerMove;
                     rigid->rbMove(correction.x, correction.y);
                     auto project = (newV * direction) / direction.norm();
-                    collisionV -=  project * direction * rigid->rbGetBounciness();
+                    collisionV -=  project * direction * (1 + rigid->rbGetBounciness());
                 }
             }
         }
