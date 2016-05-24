@@ -41,11 +41,7 @@ float CircleCollider::getRadius() const {
 }
 
 bool CircleCollider::raycast(Ray ray, float maxDistance, RaycastHit& hit) {
-    auto rb = getAttachedRigidbody();
-    auto centerAbsPosition = center;
-    if (rb != nullptr) {
-        centerAbsPosition += rb->rbGetCenter();
-    }
+    auto centerAbsPosition = getRayOrigin();
     
     auto distToOrigin = distance(ray.origin, centerAbsPosition);
     // do not continue the calculation if it's just too far away
@@ -94,4 +90,17 @@ bool CircleCollider::raycast(Ray ray, float maxDistance, RaycastHit& hit) {
     }
     
     return false;
+}
+
+Vector CircleCollider::getRayOrigin() {
+    auto rb = getAttachedRigidbody();
+    auto centerAbsPosition = center;
+    if (rb != nullptr) {
+        centerAbsPosition += rb->rbGetCenter();
+    }
+    return centerAbsPosition;
+}
+
+float CircleCollider::getRayDistance(const Vector &direction) {
+    return radius;
 }

@@ -10,9 +10,11 @@
 #define Engine_h
 
 #include <map>
+#include <set>
 #include <memory>
 #include "Rigidbody.hpp"
 #include "GravitySource.hpp"
+#include "Collider.hpp"
 #include "Clock.hpp"
 
 namespace physics {
@@ -23,6 +25,8 @@ namespace physics {
         uint32_t nextHandle = 1;
         std::map<uint32_t, std::shared_ptr<Rigidbody>> rigidbodies;
         std::map<uint32_t, std::shared_ptr<GravitySource>> gravities;
+        std::map<uint32_t, std::shared_ptr<Collider>> colliders;
+        std::map<std::shared_ptr<Rigidbody>, std::set<std::shared_ptr<Collider>>> rigidColliders;
         float maxVelocity;
         int minX, minY, maxX, maxY;
         float bounceRateForMovementArea;
@@ -57,6 +61,10 @@ namespace physics {
         /// \param handleGravity the handle returned when the gravity source was added
         void removeGravity(uint32_t handleGravity);
         
+        uint32_t addCollider(std::shared_ptr<Collider> collider);
+        
+        void removeCollider(uint32_t handleCollider);
+        
         /// \brief Set a maximum velocity allowed by the engine. By Default, there is no limit (FLT_MAX)
         void setMaxVelocity(float v);
         
@@ -64,7 +72,7 @@ namespace physics {
         void setMovementArea(int minX, int minY, int maxX, int maxY);
         
         /// \brief Set the bounce rate for the eadge of movement area
-        void setBounceRateForMovementArea(float rate);
+        void setBouncinessForMovementArea(float rate);
         
         /// \brief Calculate & update all rigidbodies in the engine
         /// \param clock A clock that would be reset in every update. This make the update frame rate independant

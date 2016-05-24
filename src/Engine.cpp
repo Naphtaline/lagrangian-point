@@ -58,6 +58,24 @@ void Engine::removeGravity(uint32_t handleGravity) {
     }
 }
 
+uint32_t Engine::addCollider(std::shared_ptr<Collider> collider) {
+    uint32_t handle = 0;
+    if (collider != nullptr) {
+        handle = nextHandle++;
+        colliders[handle] = collider;
+        if (collider->getAttachedRigidbody() != nullptr) {
+            rigidColliders[collider->getAttachedRigidbody()].insert(collider);
+        }
+    }
+    return handle;
+}
+
+void Engine::removeCollider(uint32_t handleCollider) {
+    if (colliders.find(handleCollider) != colliders.end()) {
+        colliders.erase(handleCollider);
+    }
+}
+
 void Engine::setMaxVelocity(float v) {
     maxVelocity = v;
 }
@@ -69,7 +87,7 @@ void Engine::setMovementArea(int minX, int minY, int maxX, int maxY) {
     this->maxY = maxY;
 }
 
-void Engine::setBounceRateForMovementArea(float rate) {
+void Engine::setBouncinessForMovementArea(float rate) {
     rate = rate < 0 ? 0 : rate;
     rate = rate > 1 ? 1 : rate;
     bounceRateForMovementArea = rate;
@@ -80,10 +98,13 @@ void Engine::update() {
         clock = std::make_shared<Clock>();
     }
     auto deltaTime = clock->restart();
+    
     for (auto rigidPair : rigidbodies) {
         auto rigid = rigidPair.second;
 
-        auto newV = rigid->rbGetVelocity(); // new velocity
+        auto newV = rigid->rbGetVelocity(); // new velocity from old
+        
+        // add extra force
         auto force = rigid->rbGetExtraForce();
         auto mass = rigid->rbGetMass();
         auto vForce = force / mass;
@@ -91,8 +112,6 @@ void Engine::update() {
         auto gravityA = Vector(); // new acceleration
         // calculate gravity
         if (rigid->rbIsUsingGravity()) {
-//            auto rigidRadius = rigid->getRigidbodyRadius();
-//            auto landedCenter = Vector();
             // calculate gravities
             for (auto gravityPair : gravities) {
                 auto gravity = gravityPair.second;
@@ -104,16 +123,6 @@ void Engine::update() {
                     if (gravity->getMinDistance() < dist) { // rigidbody is between max & min distance
                         float minDistSrq = gravity->getMinDistance() * gravity->getMinDistance();
                         a = a * minDistSrq / dist / dist;
-//                    } else if (gravity->getGravityRadius() + rigidRadius < dist) {
-//                        a = a * (dist - gravity->getGravityRadius()) / (gravity->getMinDistance() - gravity->getGravityRadius());
-//                    } else {
-//                        if (vForce.x == 0 && vForce.y == 0) {
-//                            a = 0;
-//                            rigid->rbSetUseGravity(false);
-//                            rigid->setLandedSource(gravity->getCenter());
-//                            landedCenter = gravity->getCenter();
-//                        }
-//                    }
                     }
 
                     Vector vectorA = (gravity->getCenter() - rigid->rbGetCenter()) / dist * a;
@@ -126,11 +135,33 @@ void Engine::update() {
             }
 
             newV += gravityA;
-//            if (!rigid->rbIsUsingGravity()) {
-//                newV = Vector();
-//                rigid->rbSetRotation(vectorToDegree(landedCenter - rigid->rbGetCenter()));
-//            }
         }
+        
+        auto collisionV = Vector();
+        for (auto rigidCollider : rigidColliders[rigid]) {
+            
+            auto centerMove = rigidCollider->getRayOrigin();
+            for (auto colliderPair : colliders) {
+                if (rigidCollider == colliderPair.second || colliderPair.second->getAttachedRigidbody() == rigid) {
+                    continue;
+                }
+                
+                auto collider = colliderPair.second;
+                auto ray = Ray(centerMove, collider->getRayOrigin() - centerMove);
+                auto hit = RaycastHit();
+                
+                if (collider->raycast(ray, rigidCollider->getRayDistance(ray.direction), hit)) {
+                    auto direction = (hit.point - centerMove).normalize();
+                    auto correction = hit.point - direction * hit.distance * 1.001f - centerMove;
+                    rigid->rbMove(correction.x, correction.y);
+                    auto project = (newV * direction) / direction.norm();
+                    collisionV -=  project * direction * rigid->rbGetBounciness();
+                }
+            }
+        }
+        
+        newV += collisionV;
+        newV += vForce;
         
         // limit rigidbody in the movement area of engine
         auto bouniness = std::min(bounceRateForMovementArea, rigid->rbGetBounciness());
@@ -147,16 +178,13 @@ void Engine::update() {
         }
         
         // update velocity and position
-        newV += vForce;
         auto vValue = std::sqrt(newV.x * newV.x + newV.y * newV.y);
         if (vValue > maxVelocity) {
             newV *= maxVelocity / vValue;
         }
 
         rigid->rbSetVelocity(newV);
-
         newV *= deltaTime.asSeconds();
-
         rigid->rbMove(newV.x, newV.y);
     }
 }

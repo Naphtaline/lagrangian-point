@@ -13,9 +13,10 @@
 #include "Rigidbody.hpp"
 #include "Ray.hpp"
 #include "RaycastHit.hpp"
+#include "Vector.hpp"
 
 namespace physics {
-    class Collider : std::enable_shared_from_this<Collider> {
+    class Collider {
         std::shared_ptr<Rigidbody> attachedRigidbody;
         bool trigger;
     public:
@@ -23,6 +24,9 @@ namespace physics {
         virtual ~Collider();
         
         virtual bool raycast(Ray ray, float maxDistance, RaycastHit& hit) = 0;
+        virtual Vector getRayOrigin() = 0;
+        virtual float getRayDistance(const Vector &direction) = 0;
+        
         void setAttachedRigidbody(std::shared_ptr<Rigidbody> rigidbody);
         std::shared_ptr<Rigidbody> getAttachedRigidbody() const;
         void setTrigger(bool trigger);

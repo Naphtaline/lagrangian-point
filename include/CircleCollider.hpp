@@ -33,6 +33,8 @@ namespace physics {
         float getRadius() const;
         
         virtual bool raycast(Ray ray, float maxDistance, RaycastHit& hit);
+        virtual Vector getRayOrigin();
+        virtual float getRayDistance(const Vector &direction);
     };
 }
 

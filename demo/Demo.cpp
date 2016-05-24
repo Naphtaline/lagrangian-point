@@ -17,6 +17,7 @@
 #include <SFML/Graphics.hpp>
 #include <Vector.hpp>
 #include <Engine.hpp>
+#include <CircleCollider.hpp>
 #include "PlanetDemo.hpp"
 #include "PlayerDemo.hpp"
 
@@ -30,6 +31,8 @@ int main(int, char const**)
             modeToUse = mode;
         }
     }
+    modeToUse.width = modeToUse.width / 2;
+    modeToUse.height = modeToUse.height / 2;
     sf::RenderWindow window(modeToUse, "Lagrangian Point Engine");
     window.setVerticalSyncEnabled(true);
     
@@ -72,19 +75,23 @@ int main(int, char const**)
     player->setPosition(modeToUse.width / 2, modeToUse.height / 2);
     player->setTexture(&texturePlayer);
     player->setForceValue(unit / 6);
-
+    auto playerCollider = std::make_shared<physics::CircleCollider>(physics::Vector(), 3.5f * unit);
+    playerCollider->setAttachedRigidbody(player);
+    
     // create planet 1
     auto planet1 = std::make_shared<PlanetDemo>(20 * unit, 20 * unit, 6.6f * unit);
     planet1->setOrigin(10 * unit, 10.6f * unit);
     planet1->setPosition(18 * unit, 16 * unit);
     planet1->setTexture(&texturePlanet1);
     planet1->a = unit / 25;
+    auto planet1Collider = std::make_shared<physics::CircleCollider>(planet1->getCenter(), planet1->getGravityRadius());
 
     // create planet 2
     auto planet2 = std::make_shared<PlanetDemo>(20 * unit, 20 * unit, 10 * unit);
     planet2->setPosition(80 * unit, 23 * unit);
     planet2->a = unit / 15;
     planet2->setTexture(&texturePlanet2);
+    auto planet2Collider = std::make_shared<physics::CircleCollider>(planet2->getCenter(), planet2->getGravityRadius());
 
     // create planet 3
     auto planet3 = std::make_shared<PlanetDemo>(16 * unit, 20 * unit, 8 * unit);
@@ -92,6 +99,7 @@ int main(int, char const**)
     planet3->a = unit / 20;
     planet3->setTexture(&texturePlanet3);
     planet3->setOrigin(8 * unit, 8 * unit);
+    auto planet3Collider = std::make_shared<physics::CircleCollider>(planet3->getCenter(), planet3->getGravityRadius());
 
     // setup movement area
     physics::Engine::get().setMovementArea(3.5f * unit, 3.5f * unit, window.getSize().x - 3.5f * unit, window.getSize().y - 3.5f * unit);
@@ -101,6 +109,10 @@ int main(int, char const**)
     physics::Engine::get().addGravity(planet1);
     physics::Engine::get().addGravity(planet2);
     physics::Engine::get().addGravity(planet3);
+    physics::Engine::get().addCollider(playerCollider);
+    physics::Engine::get().addCollider(planet1Collider);
+    physics::Engine::get().addCollider(planet2Collider);
+    physics::Engine::get().addCollider(planet3Collider);
 
     // Start the game loop
     while (window.isOpen())

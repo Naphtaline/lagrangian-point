@@ -14,6 +14,7 @@ PlayerDemo::PlayerDemo(float radius, physics::Vector velocity)
     setOrigin(radius, radius);
     rbSetExtraForce(physics::Vector(0, 0));
     rbSetVelocity(velocity);
+    rbSetBounciness(1);
 }
 
 PlayerDemo::~PlayerDemo() {
