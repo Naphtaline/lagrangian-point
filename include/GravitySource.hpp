@@ -1,6 +1,6 @@
 //
 //  GravitySource.h
-//  GameJamPhysics
+//  LagrangianPoint
 //
 //  Created by Xiaxing SHI on 06/05/16.
 //  Copyright © 2016 Dimgai. All rights reserved.

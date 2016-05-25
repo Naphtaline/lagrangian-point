@@ -1,6 +1,6 @@
 //
 //  PlanetDemo.hpp
-//  GameJamPhysics
+//  LagrangianPoint
 //
 //  Created by Xiaxing SHI on 07/05/16.
 //  Copyright © 2016 Dimgai. All rights reserved.
