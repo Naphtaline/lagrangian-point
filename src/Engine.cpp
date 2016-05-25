@@ -9,6 +9,7 @@
 #include <cmath>
 #include <cfloat>
 #include <climits>
+#include <algorithm>
 #include "Engine.hpp"
 
 using namespace physics;
