@@ -103,7 +103,7 @@ void Engine::update() {
     for (auto rigidPair : rigidbodies) {
         auto rigid = rigidPair.second;
 
-        auto newV = rigid->rbGetVelocity(); // new velocity from old
+        auto oldV = rigid->rbGetVelocity(); // new velocity from old
         
         // add extra force
         auto force = rigid->rbGetExtraForce();
@@ -135,10 +135,11 @@ void Engine::update() {
                 rigid->rbSetRotation(vectorToDegree(gravityA));
             }
 
-            newV += gravityA;
+            oldV += gravityA;
         }
         
         auto collisionV = Vector();
+        auto hasCollided = false;
         for (auto rigidCollider : rigidColliders[rigid]) {
             
             auto centerMove = rigidCollider->getRayOrigin();
@@ -152,16 +153,36 @@ void Engine::update() {
                 auto hit = RaycastHit();
                 
                 if (collider->raycast(ray, rigidCollider->getRayDistance(ray.direction), hit)) {
+                    hasCollided = true;
                     auto direction = (hit.point - centerMove).normalize();
                     auto correction = hit.point - direction * rigidCollider->getRayDistance(ray.direction) - centerMove;
                     rigid->rbMove(correction.x, correction.y);
-                    auto project = (newV * direction) / direction.norm();
-                    collisionV -=  project * direction * (1 + rigid->rbGetBounciness());
+                    auto project = (oldV * direction) / direction.norm();
+                    if (project > 0) {
+                        collisionV -=  project * direction * (1 + rigid->rbGetBounciness());
+                    }
                 }
             }
         }
         
-        newV += collisionV;
+        if (hasCollided) {
+            if (rigid->rbIsInCollision()) {
+                rigid->rbOnCollisionStay();
+            } else {
+                rigid->rbOnCollisionEnter();
+            }
+        } else {
+            if (rigid->rbIsInCollision()) {
+                rigid->rbOnCollisionEnd();
+            }
+        }
+        rigid->rbSetInCollision(hasCollided);
+        
+        auto newV = rigid->rbGetVelocity();
+        if (rigid->rbIsUsingGravity()) {
+            newV += gravityA;
+            newV += collisionV;
+        }
         newV += vForce;
         
         // limit rigidbody in the movement area of engine

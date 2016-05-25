@@ -41,6 +41,19 @@ float PlayerDemo::getForceValue() {
     return forceValue;
 }
 
+void PlayerDemo::rbOnCollisionEnter() {
+    rbSetUseGravity(false);
+    rbSetVelocity(physics::Vector());
+}
+
+void PlayerDemo::rbOnCollisionStay() {
+    
+}
+
+void PlayerDemo::rbOnCollisionEnd() {
+    
+}
+
 void PlayerDemo::setForce(float directionX, float directionY) {
     auto force = physics::Vector(directionX, directionY);
     if (directionX != 0 || directionY != 0) {
@@ -51,10 +64,10 @@ void PlayerDemo::setForce(float directionX, float directionY) {
 }
 
 void PlayerDemo::jump() {
-    if (!rbIsUsingGravity()) {
-        rbSetUseGravity(true);
-        auto force = (rbGetCenter() - landCenter).normalize();
-        force *= forceValue * 1.5f; // normalize the vector and then apply 1.5 * force for jump
-        rbSetExtraForce(force);
-    }
+//    if (!rbIsUsingGravity()) {
+//        rbSetUseGravity(true);
+//        auto force = (rbGetCenter() - landCenter).normalize();
+//        force *= forceValue * 1.5f; // normalize the vector and then apply 1.5 * force for jump
+//        rbSetExtraForce(force);
+//    }
 }

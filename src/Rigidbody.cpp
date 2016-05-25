@@ -10,7 +10,7 @@
 
 using namespace physics;
 
-Rigidbody::Rigidbody() : useGravity(true), velocity(Vector()), mass(1), bounciness(0.5f), extraForce(Vector()) {
+Rigidbody::Rigidbody() : useGravity(true), velocity(Vector()), mass(1), bounciness(0.5f), extraForce(Vector()), isInCollision(false) {
     
 }
 
@@ -59,4 +59,12 @@ void Rigidbody::rbSetExtraForce(Vector force) {
 
 Vector Rigidbody::rbGetExtraForce() const {
     return this->extraForce;
+}
+
+void Rigidbody::rbSetInCollision(bool value) {
+    this->isInCollision = value;
+}
+
+bool Rigidbody::rbIsInCollision() {
+    return this->isInCollision;
 }

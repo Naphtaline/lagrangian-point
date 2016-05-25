@@ -25,6 +25,9 @@ public:
     virtual physics::Vector rbGetCenter() const;
     virtual void rbMove(float x, float y);
     virtual void rbSetRotation(float degree);
+    virtual void rbOnCollisionEnter();
+    virtual void rbOnCollisionStay();
+    virtual void rbOnCollisionEnd();
     
     // custom methods for demo reason
     void setForceValue(float f);

@@ -21,6 +21,7 @@ namespace physics {
         float mass;
         float bounciness;
         Vector extraForce;
+        bool isInCollision;
     public:
         Rigidbody();
         virtual ~Rigidbody();
@@ -60,6 +61,10 @@ namespace physics {
         /// \brief Get the extra force
         Vector rbGetExtraForce() const;
         
+        void rbSetInCollision(bool value);
+        
+        bool rbIsInCollision();
+        
         /// \brief Get the center of mass in global of the rigidbody
         virtual Vector rbGetCenter() const  = 0;
         
@@ -68,6 +73,12 @@ namespace physics {
         
         /// \brief Rotate the rigidbody
         virtual void rbSetRotation(float degree)  = 0;
+        
+        virtual void rbOnCollisionEnter() = 0;
+        
+        virtual void rbOnCollisionStay() = 0;
+        
+        virtual void rbOnCollisionEnd() = 0;
     };
 }
 #endif /* Rigidbody_h */
