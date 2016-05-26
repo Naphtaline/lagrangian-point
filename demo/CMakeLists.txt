@@ -28,6 +28,7 @@ file(GLOB DEMO_SRC
 )
 
 add_executable(${EXECUTABLE_NAME} ${DEMO_SRC})
+add_dependencies(${EXECUTABLE_NAME} ${PROJECT_NAME})
 target_link_libraries(${EXECUTABLE_NAME} ${ENGINE_LIB})
 
 file(COPY "${SRCROOT}/resources" DESTINATION "${BINROOT}")
