@@ -51,7 +51,7 @@ void PlayerDemo::rbOnCollisionStay() {
 }
 
 void PlayerDemo::rbOnCollisionEnd() {
-    
+    rbSetUseGravity(true);
 }
 
 void PlayerDemo::setForce(float directionX, float directionY) {
